@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI-powered Fake News Predictor">
+  <title>Fake News Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="page">
+  <section class="card">
+    <header class="hero">
+      <h1>Fake News Predictor</h1>
+      <p>AI-powered news authenticity detection</p>
+      <span class="line"></span>
+      <div>Paste any news article below and let our AI model predict whether it is <b class="real">REAL</b> or <b class="fake">FAKE</b>.</div>
+    </header>
+
+    <form id="form" method="POST" action="{{ url_for('predict') }}">
+      <div class="input-wrap">
+        <textarea id="newsText" name="news_text" maxlength="15000" placeholder="Paste the news article here..." required>{{ submitted_text or '' }}</textarea>
+        <div class="counter"><span><b id="chars">0</b> Characters</span><i></i><span><b id="words">0</b> Words</span></div>
+      </div>
+      <div class="actions">
+        <button type="button" class="secondary" id="example">▧ &nbsp;Example News</button>
+        <button type="submit" class="primary" id="analyze">⌕ &nbsp;Analyze News</button>
+        <button type="button" class="clear" id="clear">× &nbsp;Clear</button>
+      </div>
+      <div class="tip">ⓘ &nbsp;<b>Tip:</b> The more context in the article, the more useful the prediction.</div>
+    </form>
+
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+    <section id="loading" class="loading hidden">
+      <div class="spinner"></div><h2>Analyzing news article...</h2><p>Please wait while the AI model processes the text.</p>
+    </section>
+
+    {% if prediction %}
+    <section class="result {% if prediction == 'REAL' %}real-card{% else %}fake-card{% endif %}">
+      <div class="result-icon">{% if prediction == 'REAL' %}✓{% else %}×{% endif %}</div>
+      <div class="result-body">
+        <div class="result-title"><h2>{{ prediction }} NEWS</h2><span>✦ · ✦</span></div>
+        <p>{% if prediction == 'REAL' %}This article is likely to be real and trustworthy.{% else %}This article is likely to be fake or misleading.{% endif %}</p>
+        <div class="confidence"><span>Confidence Score</span><b>{{ confidence }}%</b></div>
+        <div class="bar"><div style="width:{{ confidence }}%"></div></div>
+      </div>
+    </section>
+    {% else %}
+    <section id="empty" class="empty"><div class="empty-icon">⌕</div><h2>No prediction yet</h2><p>Enter a news article above and click Analyze News</p></section>
+    {% endif %}
+
+    <section class="features">
+      <article><span class="icon green">♧</span><div><h3>AI Powered</h3><p>Machine learning model trained on 44,898+ articles</p></div></article>
+      <article><span class="icon blue">◎</span><div><h3>High Accuracy</h3><p>Achieved <b>98.71%</b> accuracy on test dataset</p></div></article>
+      <article><span class="icon purple">ϟ</span><div><h3>Instant Results</h3><p>Get real-time predictions within seconds</p></div></article>
+      <article><span class="icon orange">♢</span><div><h3>Secure &amp; Private</h3><p>Your article is processed locally and not stored by this app</p></div></article>
+    </section>
+
+    <section class="info"><small>ABOUT THE PROJECT</small><h2>Machine Learning for News Classification</h2><p>This project uses NLP, TF-IDF feature extraction and Logistic Regression to classify news articles based on patterns learned from the training data.</p></section>
+    <section class="info"><small>HOW IT WORKS</small><h2>From Article to Prediction</h2><div class="steps"><div><b>01</b><h3>Input</h3><p>Paste the article.</p></div><div><b>02</b><h3>Preprocess</h3><p>Clean the text.</p></div><div><b>03</b><h3>TF-IDF</h3><p>Create numerical features.</p></div><div><b>04</b><h3>Predict</h3><p>Classify REAL or FAKE.</p></div></div></section>
+    <section class="info"><small>DATASET</small><h2>Training Dataset</h2><div class="stats"><div><b>44,898+</b><span>Total Articles</span></div><div><b>{{ model_accuracy }}</b><span>Test Accuracy</span></div><div><b>TF-IDF</b><span>Feature Extraction</span></div><div><b>Logistic Regression</b><span>Classifier</span></div></div></section>
+
+    <aside class="disclaimer"><span>!</span><div><h3>Disclaimer</h3><p>This AI/ML model analyzes patterns learned from its training data. It should not be considered a definitive fact-checking tool. Always verify important news from multiple trusted sources.</p></div></aside>
+    <footer><b>Fake News Predictor</b><span>NLP + Machine Learning + Flask</span></footer>
+  </section>
+</main>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
